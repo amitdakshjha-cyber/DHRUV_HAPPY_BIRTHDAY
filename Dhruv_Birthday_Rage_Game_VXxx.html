@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Dhruv Birthday Rage Game V3</title>
+<style>
+body{margin:0;font-family:Arial;background:#111;color:white;text-align:center}
+.screen{display:none;min-height:100vh;justify-content:center;align-items:center;flex-direction:column}
+.active{display:flex}
+.hero{background:linear-gradient(135deg,#000,#222,#111)}
+.btn{padding:12px 24px;border:none;border-radius:10px;font-size:18px;cursor:pointer;margin:8px}
+#maze{position:relative;width:300px;height:300px;background:#222;border:3px solid white}
+.wall{position:absolute;background:white}
+#player,#goal{position:absolute;width:20px;height:20px}
+#player{background:red;left:10px;top:10px}
+#goal{background:lime;left:270px;top:270px}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);justify-content:center;align-items:center}
+#popup{
+background:#111;
+padding:40px;
+border-radius:20px;
+font-size:80px;
+border:5px solid red;
+max-width:90%;
+animation:shake .4s infinite;
+}
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-8px);}
+50%{transform:translateX(8px);}
+75%{transform:translateX(-8px);}
+100%{transform:translateX(0);}
+}
+.colorful{background:linear-gradient(45deg,#ff4d4d,#ffcc00,#00ccff,#66ff66);color:black}
+</style>
+</head>
+<body>
+
+<div id="overlay">
+ <div id="popup">
+   <div id="popupText"></div><br>
+   <button class="btn" onclick="closePopup()">CLOSE 😭</button>
+ </div>
+</div>
+
+<div id="start" class="screen active hero">
+<h1>😈 THE ULTIMATE BIRTHDAY RAGE GAME 😈</h1>
+<p>Only legends survive...</p>
+<button class="btn" onclick="show('mazeScreen')">START</button>
+<button class="btn" onclick="alert('Nice try 💀 There is no free win!')">FREE WIN 🏆</button>
+<p>Made by Atharv ❤️</p>
+</div>
+
+<div id="mazeScreen" class="screen">
+<h2>🧩 Maze Level</h2>
+<div id="maze">
+<div id="player"></div>
+<div id="goal"></div>
+<div class="wall" style="left:60px;top:0;width:20px;height:220px"></div>
+<div class="wall" style="left:60px;top:240px;width:20px;height:60px"></div>
+<div class="wall" style="left:140px;top:80px;width:20px;height:220px"></div>
+<div class="wall" style="left:220px;top:0;width:20px;height:180px"></div>
+</div>
+<div>
+<button class="btn" onclick="move(0,-10)">⬆️</button><br>
+<button class="btn" onclick="move(-10,0)">⬅️</button>
+<button class="btn" onclick="move(10,0)">➡️</button><br>
+<button class="btn" onclick="move(0,10)">⬇️</button>
+</div>
+</div>
+
+<div id="clickScreen" class="screen">
+<h2>😈 Click Challenge</h2>
+<p id="countEl">0/20</p>
+<button id="clickBtn" class="btn" onclick="clickMe()">CLICK ME</button>
+</div>
+
+<div id="quizScreen" class="screen">
+<h2>Who is your best friend?</h2>
+<button class="btn" onclick="wrong()">Random Guy</button>
+<button class="btn" onclick="winQuiz()">Atharv 😎</button>
+<button class="btn" onclick="wrong()">Nobody 💀</button>
+<p id="quizMsg"></p>
+</div>
+
+<div id="finalScreen" class="screen colorful">
+
+<h1>🎉 HAPPY BIRTHDAY DHRUV 🎉</h1>
+
+<img
+src="dhruv.jpg"
+alt="Dhruv"
+style="
+width:250px;
+height:250px;
+object-fit:cover;
+border-radius:20px;
+border:5px solid white;
+margin:20px;
+">
+
+<h2>You survived the rage game 😭🔥</h2>
+
+<p>Made by Atharv ❤️</p>
+
+</div>
+<script>
+function show(id){
+ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+}
+
+let x=10,y=10;
+const walls=[
+{x:60,y:0,w:20,h:220},
+{x:60,y:240,w:20,h:60},
+{x:140,y:80,w:20,h:220},
+{x:220,y:0,w:20,h:180}
+];
+
+function collide(nx,ny){
+ return walls.some(w=> nx+20>w.x && nx<w.x+w.w && ny+20>w.y && ny<w.y+w.h);
+}
+
+function move(dx,dy){
+ let nx=x+dx, ny=y+dy;
+ if(nx<0||ny<0||nx>280||ny>280||collide(nx,ny)) return;
+ x=nx; y=ny;
+ document.getElementById('player').style.left=x+'px';
+ document.getElementById('player').style.top=y+'px';
+ if(x>=260 && y>=260) setTimeout(()=>show('clickScreen'),500);
+}
+
+let count=0;
+let trolled=false;
+
+const msgs=[
+"Too slow 🫩✌️","Womp womp 👽","My turtle faster than u dawg 😂",
+"Skill issue certified 🥀","Painful to watch 😭",
+"Top 10 Dhruv aura moments 🫪","Yowai mo 🐼"
+];
+
+function popup(msg){
+ document.getElementById('popupText').innerHTML=msg;
+ document.getElementById('overlay').style.display='flex';
+}
+function closePopup(){
+ document.getElementById('overlay').style.display='none';
+}
+
+function clickMe(){
+ count++;
+ document.getElementById('countEl').innerText=count+"/20";
+
+ if(count % 2 === 0 && count < 20){
+   popup(msgs[Math.floor(Math.random()*msgs.length)]);
+ }
+
+if(count===18 && !trolled){
+
+   trolled=true;
+
+   popup("99% COMPLETE 😈<br>SIKE 💀");
+
+   count=17;
+
+   document.getElementById('countEl').innerText="17/20";
+}
+
+ if(count>=20){
+   popup("SECURITY CHECK 🚨");
+   setTimeout(()=>{
+      closePopup();
+      show('quizScreen');
+   },1500);
+ }
+}
+
+function wrong(){
+ document.getElementById('quizMsg').innerText="Bro betrayed Atharv 💀";
+}
+function winQuiz(){
+ show('finalScreen');
+}
+</script>
+</body>
+</html>
